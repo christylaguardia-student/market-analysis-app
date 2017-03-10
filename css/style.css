@@ -1,0 +1,57 @@
+/*
+#084C8D tri-met blue
+#00925F green
+#181197 bright blue
+#D9A600 yellow
+#D98100 orange
+font-family: 'Pacifico', cursive;
+font-family: 'Quicksand', sans-serif;
+font-family: 'Inconsolata', monospace;
+*/
+
+body {
+  margin: 0 auto;
+}
+
+.logo {
+  font-family: 'Pacifico', cursive;
+  color: #084C8D;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.text {
+  font-family: 'Quicksand', sans-serif;
+}
+
+.data {
+  font-family: 'Inconsolata', monospace;
+}
+
+.images {
+  opacity: .5;
+  width: 300px;
+  /*background-size: 300px;
+  background-repeat: no-repeat;*/
+  height: 300px;
+  /*vertical-align: */
+}
+
+img:hover {
+  opacity: 1;
+}
+
+#progress {
+  width: 100%;
+  background-color: #e5f4ef;
+}
+
+#bar {
+  width: 1%;
+  height: 30px;
+  background-color: #00925F;
+  text-align: center;
+  color: #FFFFFF;
+  padding-top: 10px;
+  margin-top: 20px;
+}
