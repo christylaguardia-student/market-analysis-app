@@ -11,4 +11,4 @@ Create a website that presents three different images for the user to choose fro
 
 ##RESOURCES
 https://www.w3schools.com/howto/howto_js_progressbar.asp
-http://stackoverflow.com/questions/24849/execute-script-after-specific-delay-using-javascript
+https://www.w3schools.com/js/js_timing.asp
