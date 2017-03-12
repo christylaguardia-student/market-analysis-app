@@ -1,12 +1,14 @@
 var products = [];
 var results = [];
 var answered = 0;
+var totalQuestions = 15;
 
 // constructor function
-function Product(name, fileName) {
-  this.name = name;
-  this.fileName = fileName;
-  this.votes = 0;
+function Product(name, source) {
+  this.label = name; // inside the bar
+  this.fileName = source;
+  this.y = 0; // number of votes, y-axis value
+  this.indexLabel = "0%"; // percentage of votes, y-axis label
 }
 
 // create product objects
@@ -64,21 +66,33 @@ function recordClick(event) {
   var lastSlash = itemSource.lastIndexOf("/") + 1;
   itemSource = itemSource.substring(lastSlash);
   console.log(itemSource + " was clicked.");
+  // get object of clicked image
+  var foundProduct = products.find(function(product){
+    return (product.fileName == itemSource)
+  });
+  foundProduct.y++;
+  foundProduct.indexLabel = Math.round((foundProduct.y / totalQuestions) * 100) + "%";
+
   // add to the results array
   results.push(itemSource);
   // add to total count
   answered++;
   // update progress bar
   moveProgressBar();
-  // change selected product to thumbs up
+  // change selected product to check icon
   clickedItem.src = "img/" + "check-icon.png";
+  // remove event listenters to prevent voting again on same images
+  for (var i = 1; i <= 3; i++) {
+    var image = document.getElementById("choice" + i);
+    image.removeEventListener("click", recordClick, false);
+  }
   // wait a few seconds
   setTimeout(showNextImages, 1000);
 }
 
 function showNextImages() {
   // check if last question
-  if (answered === 15) {
+  if (answered === totalQuestions) {
     showResults();
   } else {
     showImages();
@@ -87,9 +101,9 @@ function showNextImages() {
 
 function moveProgressBar() {
   var completedBar = document.getElementById("bar");
-  var width = Math.floor((answered / 15) * 100);
+  var width = Math.floor((answered / totalQuestions) * 100);
   completedBar.style.width = width + '%';
-  completedBar.innerHTML = answered + " / 15";
+  completedBar.innerHTML = answered + " / " + totalQuestions;
 }
 
 function showResults() {
@@ -105,99 +119,56 @@ function showResults() {
     progressBar.removeChild(progressBar.firstChild);
   }
 
-  // make header
-  var resultsElement = document.getElementById("results");
-  var header = document.createElement("h3");
-  header.setAttribute("class", "text");
-  header.textContent = "Your Product Survey Results:";
-  resultsElement.appendChild(header);
-
-  // make table
-  var table = document.createElement("table");
-  table.setAttribute("class", "data");
-
-  // make table headers
-  var headerRow = document.createElement("tr");
-  var headerData2 = document.createElement("th");
-  headerData2.setAttribute("colspan","2");
-  headerData2.textContent = "Product"
-  headerRow.appendChild(headerData2);
-  var headerData3 = document.createElement("th");
-  headerData3.setAttribute("colspan","2");
-  headerData3.textContent = "Votes"
-  headerRow.appendChild(headerData3);
-  table.appendChild(headerRow)
-
-  // make row for each product
-  var sorted = products.sort();
-  for (var i = 1; i < sorted.length; i++) {
-    var tableRow = document.createElement("tr");
-    // add product name
-    var tableData2 = document.createElement("td");
-    tableData2.textContent = products[i].name;
-    tableRow.appendChild(tableData2);
-    // add thumbnail image
-    var tableData3 = document.createElement("td");
-    var image = document.createElement("img");
-    image.setAttribute("class", "thumbnail");
-    image.src = "img/" + products[i].fileName;
-    tableData3.appendChild(image);
-    tableRow.appendChild(tableData3);
-    // get count in results array
-    var votes = 0;
-    for (var j = 0; j < results.length; j++) {
-        if (results[j] === products[i].fileName) {
-            votes++;
-        }
-    }
-    var tableData4 = document.createElement("td");
-    tableData4.setAttribute("class", "centerAlign");
-    tableData4.textContent = votes;
-    tableRow.appendChild(tableData4);
-    // get percentage of votes
-    var tableData5 = document.createElement("td");
-    tableData5.setAttribute("class", "centerAlign");
-    tableData5.textContent = Math.round((votes / 15 ) * 100) + "%";
-    tableRow.appendChild(tableData5);
-
-    table.appendChild(tableRow);
-  }
-  resultsElement.appendChild(table);
+  showChart();
 }
 
 function delay(ms) {
    ms += new Date().getTime();
    while (new Date() < ms){}
 }
+
 function showChart () {
-  var chart = new CanvasJS.Chart("chartContainer",
-	{
+  var chart = new CanvasJS.Chart("chartContainer", {
+		theme: "theme2",//theme1
+		// title:{
+		// 	text: "Customer Interest Survey Results",
+    //   fontFamily: "Inconsolata",
+    //   fontColor: "#084C8D",
+    //   fontSize: 18
+		// },
 		animationEnabled: true,
-		theme: "theme2",
-		//exportEnabled: true,
-		title:{
-			text: "Simple Column Chart"
-		},
+    axisY: {
+      tickThickness: 0,
+      lineThickness: 0,
+      // valueFormatString: " ",
+      gridThickness: 0,
+      includeZero: true,
+      interval: 1
+    },
+    axisX: {
+      tickThickness: 0,
+      lineThickness: 0,
+      // labelFontSize: 14,
+      // labelFontColor: "#084C8D",
+      interval: 1,
+      label: "Your Votes"
+    },
 		data: [
 		{
-			type: "column", //change type to bar, line, area, pie, etc
-			dataPoints: [
-				{ x: 10, y: 71 },
-				{ x: 20, y: 55 },
-				{ x: 30, y: 50 },
-				{ x: 40, y: 65 },
-				{ x: 50, y: 95 },
-				{ x: 60, y: 68 },
-				{ x: 70, y: 28 },
-				{ x: 80, y: 34 },
-				{ x: 90, y: 14 }
-			]
+      // indexLabelFontSize: 14,
+      toolTipContent: "<span style='\"'color: {color};'\"'><strong>{indexLabel} </strong></span><span style='\"'font-size: 14px; color:#084C8D '\"'><strong>{y}</strong></span>",
+      indexLabelPlacement: "inside",
+      indexLabelFontColor: "black",
+      // indexLabelFontWeight: 600,
+      indexLabelFontFamily: "Inconsolata",
+      color: "#D98100",
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "bar",
+			dataPoints: products
 		}
 		]
 	});
-
 	chart.render();
 }
-window.addEventListener("load", showChart);
+
 window.addEventListener("load", showImages);
-// window.addEventListener("load", makeImagesClickable);
