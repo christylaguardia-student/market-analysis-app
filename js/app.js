@@ -7,6 +7,7 @@ var totalQuestions = 15;
 function Product(name, source) {
   this.label = name; // inside the bar
   this.fileName = source;
+  this.name = source;
   this.y = 0; // number of votes, y-axis value
   this.indexLabel = "0%"; // percentage of votes, y-axis label
 }
@@ -70,6 +71,8 @@ function recordClick(event) {
   var foundProduct = products.find(function(product){
     return (product.fileName == itemSource)
   });
+
+  // add to count and percentage of votes
   foundProduct.y++;
   foundProduct.indexLabel = Math.round((foundProduct.y / totalQuestions) * 100) + "%";
 
@@ -129,18 +132,12 @@ function delay(ms) {
 
 function showChart () {
   var chart = new CanvasJS.Chart("chartContainer", {
-		theme: "theme2",//theme1
-		// title:{
-		// 	text: "Customer Interest Survey Results",
-    //   fontFamily: "Inconsolata",
-    //   fontColor: "#084C8D",
-    //   fontSize: 18
-		// },
+		theme: "theme2",
 		animationEnabled: true,
     axisY: {
       tickThickness: 0,
       lineThickness: 0,
-      // valueFormatString: " ",
+      valueFormatString: " ",
       gridThickness: 0,
       includeZero: true,
       interval: 1
@@ -148,21 +145,16 @@ function showChart () {
     axisX: {
       tickThickness: 0,
       lineThickness: 0,
-      // labelFontSize: 14,
-      // labelFontColor: "#084C8D",
       interval: 1,
       label: "Your Votes"
     },
 		data: [
 		{
-      // indexLabelFontSize: 14,
-      toolTipContent: "<span style='\"'color: {color};'\"'><strong>{indexLabel} </strong></span><span style='\"'font-size: 14px; color:#084C8D '\"'><strong>{y}</strong></span>",
+      toolTipContent: "<span style='\"'color: {color};'\"'><strong>{y} Votes</strong></span>",
       indexLabelPlacement: "inside",
       indexLabelFontColor: "black",
-      // indexLabelFontWeight: 600,
       indexLabelFontFamily: "Inconsolata",
       color: "#D98100",
-			// Change type to "bar", "area", "spline", "pie",etc.
 			type: "bar",
 			dataPoints: products
 		}
