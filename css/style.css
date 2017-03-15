@@ -1,8 +1,9 @@
 /*
-#084C8D tri-met blue
+color: rgb(1, 130, 184) blue
 #00925F green
 #181197 bright blue
 #D9A600 yellow
+rgb(250, 164, 26) yellow
 #D98100 orange
 font-family: 'Pacifico', cursive;
 font-family: 'Quicksand', sans-serif;
@@ -25,7 +26,7 @@ header {
 
 .logo {
   font-family: 'Pacifico', cursive;
-  color: #084C8D;
+  color: rgb(1, 130, 184);
   display: inline-block;
   vertical-align: middle;
 }
@@ -45,23 +46,38 @@ img .logo {
 
 .images {
   opacity: .5;
-  /*width: 300px;*/
-  height: 300px;
-}
-
-section img {
   filter: grayscale(50%);
+  border: solid 1px #CCC;
+  box-shadow: 2px 2px 0px #999;
+  margin: 5px;
+  width: 300px;
+  height: 300px;
+  background-size: auto 300px;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-position-x: 50%;
+  border-radius: 10px;
+  /*this is cool*/
+  transition-property: opacity, left;
+  transition-duration: 1s, 3s;
 }
 
-img:hover {
+/*section img {
+  filter: grayscale(50%);
+  border: solid 1px #CCC;
+  box-shadow: 2px 2px 0px #999;
+  margin: 10px;
+  padding: 10px 10px 50px 10px;
+}*/
+
+.images:hover {
   opacity: 1;
   filter: grayscale(0%);
-  /*transition: box-shadow .5s;*/
 }
 
-.thumbnail {
+/*.thumbnail {
   width: 50px;
-}
+}*/
 
 #progress {
   width: 100%;
@@ -82,7 +98,7 @@ img:hover {
   transition: width 1s;
 }
 
-th {
+/*th {
   background-color: #D98100;
   color: #FFFFFF;
   font-size: 18px;
@@ -103,7 +119,7 @@ td {
 
 .centerAlign {
   text-align: center;;
-}
+}*/
 
 footer {
   margin-top: 50px;
