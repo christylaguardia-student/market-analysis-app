@@ -1,5 +1,5 @@
 var products = [];
-var results = [];
+// var results = [];
 var answered = 0;
 var totalQuestions = 15;
 
@@ -7,9 +7,9 @@ var totalQuestions = 15;
 function Product(name, source) {
   this.label = name; // inside the bar
   this.fileName = source;
-  this.name = source;
+  // this.name = source;
   this.y = 0; // number of votes, y-axis value
-  this.indexLabel = "0%"; // percentage of votes, y-axis label
+  this.indexLabel = "0 Votes"; // percentage of votes, y-axis label
 }
 
 // create product objects
@@ -47,13 +47,12 @@ function showImages() {
       randomIndex = Math.floor(Math.random() * products.length);
     }
     var productToDisplay = products[randomIndex];
-    // dispaly the image
-    var image = document.createElement("img");
-    image.setAttribute("caption", productToDisplay.name)
+    var image = document.createElement("div");
     image.setAttribute("class", "images");
     image.setAttribute("id","choice" + i);
+    image.setAttribute("data", productToDisplay.label); // the name of the product
+    image.style.backgroundImage = "url(img/" + productToDisplay.fileName + ")";
     image.addEventListener("click", recordClick);
-    image.src = "img/" + productToDisplay.fileName;
     container.appendChild(image);
     usedIndexes.push(randomIndex);
   }
@@ -61,35 +60,35 @@ function showImages() {
 
 function recordClick(event) {
   // get image that was clicked
-  var clickedItem = event.target;
-  var itemId = clickedItem.id;
-  var itemSource = clickedItem.src;
-  var lastSlash = itemSource.lastIndexOf("/") + 1;
-  itemSource = itemSource.substring(lastSlash);
-  console.log(itemSource + " was clicked.");
+  var clickedDiv = event.target;
+  var clickedProduct = clickedDiv.attributes.getNamedItem("data").value; // product name
+  console.log("Product Clicked: " + clickedProduct);
   // get object of clicked image
   var foundProduct = products.find(function(product){
-    return (product.fileName == itemSource)
+    return (product.label == clickedProduct)
   });
-
-  // add to count and percentage of votes
+  // add to count
   foundProduct.y++;
-  foundProduct.indexLabel = Math.round((foundProduct.y / totalQuestions) * 100) + "%";
-
-  // add to the results array
-  results.push(itemSource);
-  // add to total count
+  if (foundProduct.y === 1) {
+    foundProduct.indexLabel = foundProduct.y + " Vote (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)";
+  } else {
+    foundProduct.indexLabel = foundProduct.y + " Votes (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)";
+  }
   answered++;
-  // update progress bar
   moveProgressBar();
   // change selected product to check icon
-  clickedItem.src = "img/" + "check-icon.png";
+  clickedDiv.style.backgroundImage = "url(img/check-icon.png)";
   // remove event listenters to prevent voting again on same images
   for (var i = 1; i <= 3; i++) {
     var image = document.getElementById("choice" + i);
     image.removeEventListener("click", recordClick, false);
   }
-  // wait a few seconds
+
+  // save answer
+  localStorage.setItem("answer" + answered, JSON.stringify(foundProduct));
+
+
+  // wait a few seconds before going to next set of products
   setTimeout(showNextImages, 1000);
 }
 
@@ -130,13 +129,18 @@ function delay(ms) {
    while (new Date() < ms){}
 }
 
+// declare global chart variable
+var chart = null;
+
 function showChart () {
-  var chart = new CanvasJS.Chart("chartContainer", {
+  chart = new CanvasJS.Chart("chartContainer", {
 		theme: "theme2",
 		animationEnabled: true,
     axisY: {
       tickThickness: 0,
       lineThickness: 0,
+      labelFontFamily: "Quicksand",
+      color: "rgb(1, 130, 184)",
       valueFormatString: " ",
       gridThickness: 0,
       includeZero: true,
@@ -145,15 +149,15 @@ function showChart () {
     axisX: {
       tickThickness: 0,
       lineThickness: 0,
+      labelFontFamily: "Quicksand",
       interval: 1,
       label: "Your Votes"
     },
 		data: [
 		{
-      toolTipContent: "<span style='\"'color: {color};'\"'><strong>{y} Votes</strong></span>",
       indexLabelPlacement: "inside",
       indexLabelFontColor: "black",
-      indexLabelFontFamily: "Inconsolata",
+      indexLabelFontFamily: "Quicksand",
       color: "#D98100",
 			type: "bar",
 			dataPoints: products
