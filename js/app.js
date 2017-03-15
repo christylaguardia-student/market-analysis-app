@@ -1,7 +1,7 @@
 var products = [];
-// var results = [];
-var answered = 0;
+var answeredQuestions = 0;
 var totalQuestions = 15;
+var startTime = Date.now(); // use this as a unique identifier, number of milliseconds elapsed since 1 January 1970 00:00:00
 
 // constructor function
 function Product(name, source) {
@@ -31,7 +31,7 @@ products.push(new Product("Wine Glass", "wine_glass.jpg"));
 function showImages() {
   var container = document.getElementById("images-container");
   // check if 1st set, if not remove previous images
-  if (answered > 0) {
+  if (answeredQuestions > 0) {
     for (var i = 1; i <= 3; i++) {
       var image = document.getElementById("choice" + i);
       container.removeChild(image);
@@ -69,12 +69,10 @@ function recordClick(event) {
   });
   // add to count
   foundProduct.y++;
-  if (foundProduct.y === 1) {
-    foundProduct.indexLabel = foundProduct.y + " Vote (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)";
-  } else {
-    foundProduct.indexLabel = foundProduct.y + " Votes (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)";
-  }
-  answered++;
+  foundProduct.indexLabel = foundProduct.y + " Vote";
+  if (foundProduct.y > 1) { foundProduct.indexLabel += "s"; } // display '2 Votes' instead of '2 Vote'
+  foundProduct.indexLabel += " (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)"; // add the % votes
+  answeredQuestions++;
   moveProgressBar();
   // change selected product to check icon
   clickedDiv.style.backgroundImage = "url(img/check-icon.png)";
@@ -83,29 +81,47 @@ function recordClick(event) {
     var image = document.getElementById("choice" + i);
     image.removeEventListener("click", recordClick, false);
   }
-
   // save answer
-  localStorage.setItem("answer" + answered, JSON.stringify(foundProduct));
-
-
+  var easyToReadAnsweredQuestions = "";
+  if (answeredQuestions < 10 ) {
+    easyToReadAnsweredQuestions = "0" + answeredQuestions;
+  } else {
+    easyToReadAnsweredQuestions = answeredQuestions;
+  }
+  localStorage.setItem(startTime + "_" + easyToReadAnsweredQuestions, JSON.stringify(foundProduct));
   // wait a few seconds before going to next set of products
   setTimeout(showNextImages, 1000);
 }
 
 function showNextImages() {
   // check if last question
-  if (answered === totalQuestions) {
+  if (answeredQuestions === totalQuestions) {
     showResults();
+    document.getElementById("questionNumber").textContent = "Results";
+    // var buttonContainer = document.getElementById("buttonContainer");
+    // var button = document.createElement("input");
+    // button.setAttribute("type", "button");
+    // button.setAttribute("class", "button");
+    // button.setAttribute("value", "Retake the Survey");
+    // button.setAttribute("onclick", "retakeSurvey()")
+    // buttonContainer.appendChild(button);
   } else {
     showImages();
+    var nextQuestionNumber = answeredQuestions + 1;
+    document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
   }
 }
 
+// function retakeSurvey() {
+//   answeredQuestions = 0;
+//   showImages();
+// }
+
 function moveProgressBar() {
   var completedBar = document.getElementById("bar");
-  var width = Math.floor((answered / totalQuestions) * 100);
+  var width = Math.floor((answeredQuestions / totalQuestions) * 100);
   completedBar.style.width = width + '%';
-  completedBar.innerHTML = answered + " / " + totalQuestions;
+  completedBar.innerHTML = answeredQuestions + " / " + totalQuestions;
 }
 
 function showResults() {
@@ -165,6 +181,10 @@ function showChart () {
 		]
 	});
 	chart.render();
+}
+
+function getPastSurveys() {
+
 }
 
 window.addEventListener("load", showImages);
