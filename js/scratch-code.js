@@ -57,3 +57,48 @@
   //   table.appendChild(tableRow);
   // }
   // resultsElement.appendChild(table);
+
+
+
+
+
+
+
+
+
+
+  // add lead zero
+  // var easyToReadAnsweredQuestions = "";
+  // if (answeredQuestions < 10 ) {
+  //   easyToReadAnsweredQuestions = "0" + answeredQuestions;
+  // } else {
+  //   easyToReadAnsweredQuestions = answeredQuestions;
+  // }
+  // localStorage.setItem(startTime + "_" + easyToReadAnsweredQuestions, JSON.stringify(foundProduct));
+  // wait a few seconds before going to next set of products
+
+
+
+
+
+
+
+  // for (var i = 0; i < products.length; i++) {
+  //   var productNumber = i;
+  //   if (i < 10) {
+  //     productNumber = "0" + i;
+  //   }
+  //   localStorage.setItem("Product" + productNumber, JSON.stringify(products[i]));
+  // }
+
+
+
+
+
+  // get unique key prefixes and add to array
+  // var surveyTimes = [];
+  // for (var j = 0; j < archive.length; j++) {
+  //   if (surveyTimes.indexOf(archive[j].voteTime) === -1) {
+  //     surveyTimes.push(archive[j].voteTime);
+  //   }
+  // }
