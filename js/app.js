@@ -7,9 +7,9 @@ var startTime = Date.now(); // use this as a unique identifier, number of millis
 function Product(name, source) {
   this.label = name; // inside the bar
   this.fileName = source;
-  // this.name = source;
   this.y = 0; // number of votes, y-axis value
   this.indexLabel = "0 Votes"; // percentage of votes, y-axis label
+  this.voteTime = startTime;
 }
 
 // create product objects
@@ -81,14 +81,14 @@ function recordClick(event) {
     var image = document.getElementById("choice" + i);
     image.removeEventListener("click", recordClick, false);
   }
-  // save answer
+  // add lead zero
   var easyToReadAnsweredQuestions = "";
-  if (answeredQuestions < 10 ) {
-    easyToReadAnsweredQuestions = "0" + answeredQuestions;
-  } else {
-    easyToReadAnsweredQuestions = answeredQuestions;
-  }
-  localStorage.setItem(startTime + "_" + easyToReadAnsweredQuestions, JSON.stringify(foundProduct));
+  // if (answeredQuestions < 10 ) {
+  //   easyToReadAnsweredQuestions = "0" + answeredQuestions;
+  // } else {
+  //   easyToReadAnsweredQuestions = answeredQuestions;
+  // }
+  // localStorage.setItem(startTime + "_" + easyToReadAnsweredQuestions, JSON.stringify(foundProduct));
   // wait a few seconds before going to next set of products
   setTimeout(showNextImages, 1000);
 }
@@ -96,6 +96,14 @@ function recordClick(event) {
 function showNextImages() {
   // check if last question
   if (answeredQuestions === totalQuestions) {
+    for (var i = 0; i < products.length; i++) {
+      var productNumber = i;
+      if (i < 10) {
+        productNumber = "0" + i;
+      }
+        localStorage.setItem(startTime + "_" + productNumber, JSON.stringify(products[i]));
+    }
+
     showResults();
     document.getElementById("questionNumber").textContent = "Results";
     // var buttonContainer = document.getElementById("buttonContainer");
@@ -105,6 +113,10 @@ function showNextImages() {
     // button.setAttribute("value", "Retake the Survey");
     // button.setAttribute("onclick", "retakeSurvey()")
     // buttonContainer.appendChild(button);
+
+    
+    getPastSurveys
+
   } else {
     showImages();
     var nextQuestionNumber = answeredQuestions + 1;
@@ -184,7 +196,22 @@ function showChart () {
 }
 
 function getPastSurveys() {
+  var archive = [];
+  var keys = Object.keys(localStorage);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i] != "lclStg") { // I don't know where this comes from but I don't want it
+      archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
+    }
+  }
 
+  var surveyTimes = [];
+  for (var j = 0; j < archive.length; j++) {
+    if (surveyTimes.indexOf(archive[j].voteTime) === -1) {
+      surveyTimes.push(archive[j].voteTime);
+    }
+  }
+
+  return surveyTimes;
 }
 
 window.addEventListener("load", showImages);
