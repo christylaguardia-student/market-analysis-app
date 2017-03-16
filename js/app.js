@@ -1,7 +1,7 @@
 var products = [];
 var answeredQuestions = 0;
 var totalQuestions = 15;
-var startTime = Date.now(); // use this as a unique identifier, number of milliseconds elapsed since 1 January 1970 00:00:00
+// var startTime = Date.now(); // use this as a unique identifier, number of milliseconds elapsed since 1 January 1970 00:00:00
 
 // constructor function
 function Product(name, source) {
@@ -9,7 +9,7 @@ function Product(name, source) {
   this.fileName = source;
   this.y = 0; // number of votes, y-axis value
   this.indexLabel = "0 Votes"; // percentage of votes, y-axis label
-  this.voteTime = startTime;
+  // this.voteTime = startTime;
 }
 
 // create product objects
@@ -67,6 +67,10 @@ function recordClick(event) {
   var foundProduct = products.find(function(product){
     return (product.label == clickedProduct)
   });
+
+  // put in localStorage
+  localStorage.setItem(foundProduct.label, JSON.stringify(foundProduct));
+
   // add to count
   foundProduct.y++;
   foundProduct.indexLabel = foundProduct.y + " Vote";
@@ -81,41 +85,23 @@ function recordClick(event) {
     var image = document.getElementById("choice" + i);
     image.removeEventListener("click", recordClick, false);
   }
-  // add lead zero
-  var easyToReadAnsweredQuestions = "";
-  // if (answeredQuestions < 10 ) {
-  //   easyToReadAnsweredQuestions = "0" + answeredQuestions;
-  // } else {
-  //   easyToReadAnsweredQuestions = answeredQuestions;
-  // }
-  // localStorage.setItem(startTime + "_" + easyToReadAnsweredQuestions, JSON.stringify(foundProduct));
-  // wait a few seconds before going to next set of products
   setTimeout(showNextImages, 1000);
 }
 
 function showNextImages() {
   // check if last question
   if (answeredQuestions === totalQuestions) {
-    for (var i = 0; i < products.length; i++) {
-      var productNumber = i;
-      if (i < 10) {
-        productNumber = "0" + i;
-      }
-        localStorage.setItem(startTime + "_" + productNumber, JSON.stringify(products[i]));
-    }
 
-    showResults();
+
     document.getElementById("questionNumber").textContent = "Results";
-    // var buttonContainer = document.getElementById("buttonContainer");
-    // var button = document.createElement("input");
-    // button.setAttribute("type", "button");
-    // button.setAttribute("class", "button");
-    // button.setAttribute("value", "Retake the Survey");
-    // button.setAttribute("onclick", "retakeSurvey()")
-    // buttonContainer.appendChild(button);
-
-    
-    getPastSurveys
+    var buttonContainer = document.getElementById("buttonContainer");
+    var button = document.createElement("input");
+    button.setAttribute("type", "button");
+    button.setAttribute("class", "button");
+    button.setAttribute("value", "Show Results");
+    button.setAttribute("onclick", "showResults()")
+    buttonContainer.appendChild(button);
+    // showResults();
 
   } else {
     showImages();
@@ -123,11 +109,6 @@ function showNextImages() {
     document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
   }
 }
-
-// function retakeSurvey() {
-//   answeredQuestions = 0;
-//   showImages();
-// }
 
 function moveProgressBar() {
   var completedBar = document.getElementById("bar");
@@ -196,6 +177,7 @@ function showChart () {
 }
 
 function getPastSurveys() {
+  // get the keys of all the local storage and convert to objects
   var archive = [];
   var keys = Object.keys(localStorage);
   for (var i = 0; i < keys.length; i++) {
@@ -203,15 +185,7 @@ function getPastSurveys() {
       archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
     }
   }
-
-  var surveyTimes = [];
-  for (var j = 0; j < archive.length; j++) {
-    if (surveyTimes.indexOf(archive[j].voteTime) === -1) {
-      surveyTimes.push(archive[j].voteTime);
-    }
-  }
-
-  return surveyTimes;
+  return archive;
 }
 
 window.addEventListener("load", showImages);
