@@ -90,52 +90,38 @@ function recordClick(event) {
 
 function showNextImages() {
   // check if last question
-  if (answeredQuestions === totalQuestions) {
+  if (answeredQuestions === 15) {
 
-
-    document.getElementById("questionNumber").textContent = "Results";
     var buttonContainer = document.getElementById("buttonContainer");
     var button = document.createElement("input");
     button.setAttribute("type", "button");
     button.setAttribute("class", "button");
     button.setAttribute("value", "Show Results");
-    button.setAttribute("onclick", "showResults()")
+    button.setAttribute("onclick", "showChart()")
     buttonContainer.appendChild(button);
-    // showResults();
-
-  } else {
-    showImages();
-    var nextQuestionNumber = answeredQuestions + 1;
-    document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
   }
+  showImages();
+  var nextQuestionNumber = answeredQuestions + 1;
+  document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
 }
 
+
+
 function moveProgressBar() {
+  if (answeredQuestions === totalQuestions) {
+    totalQuestions += 15;
+
+  }
   var completedBar = document.getElementById("bar");
   var width = Math.floor((answeredQuestions / totalQuestions) * 100);
   completedBar.style.width = width + '%';
   completedBar.innerHTML = answeredQuestions + " / " + totalQuestions;
 }
 
-function showResults() {
-  // remove elements
-  var oldHeader = document.getElementById("instructions");
-  oldHeader.removeChild(oldHeader.firstChild);
-  var imagesContainer = document.getElementById("images-container");
-  while (imagesContainer.firstChild) {
-    imagesContainer.removeChild(imagesContainer.firstChild);
-  }
-  var progressBar = document.getElementById("progress");
-  while (progressBar.firstChild) {
-    progressBar.removeChild(progressBar.firstChild);
-  }
-
-  showChart();
-}
 
 function delay(ms) {
-   ms += new Date().getTime();
-   while (new Date() < ms){}
+  ms += new Date().getTime();
+  while (new Date() < ms){}
 }
 
 // declare global chart variable
@@ -143,8 +129,8 @@ var chart = null;
 
 function showChart () {
   chart = new CanvasJS.Chart("chartContainer", {
-		theme: "theme2",
-		animationEnabled: true,
+    theme: "theme2",
+    animationEnabled: true,
     axisY: {
       tickThickness: 0,
       lineThickness: 0,
@@ -162,19 +148,25 @@ function showChart () {
       interval: 1,
       label: "Your Votes"
     },
-		data: [
-		{
-      indexLabelPlacement: "inside",
-      indexLabelFontColor: "black",
-      indexLabelFontFamily: "Quicksand",
-      color: "#D98100",
-			type: "bar",
-			dataPoints: products
-		}
-		]
-	});
-	chart.render();
+    data: [
+      {
+        indexLabelPlacement: "inside",
+        indexLabelFontColor: "black",
+        indexLabelFontFamily: "Quicksand",
+        color: "#D98100",
+        type: "bar",
+        dataPoints: products
+      }
+    ]
+  });
+  renderChart();
+  window.addEventListener("click", renderChart);
 }
+
+function renderChart(){
+  chart.render();
+}
+
 
 function getPastSurveys() {
   // get the keys of all the local storage and convert to objects
@@ -182,10 +174,10 @@ function getPastSurveys() {
   var keys = Object.keys(localStorage);
   for (var i = 0; i < keys.length; i++) {
     if (keys[i] != "lclStg") { // I don't know where this comes from but I don't want it
-      archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
-    }
+    archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
   }
-  return archive;
+}
+return archive;
 }
 
 window.addEventListener("load", showImages);
