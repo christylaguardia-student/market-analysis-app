@@ -1,7 +1,8 @@
+// global objects
 var products = [];
 var answeredQuestions = 0;
 var totalQuestions = 15;
-// var startTime = Date.now(); // use this as a unique identifier, number of milliseconds elapsed since 1 January 1970 00:00:00
+var chart = null;
 
 // constructor function
 function Product(name, source) {
@@ -9,7 +10,6 @@ function Product(name, source) {
   this.fileName = source;
   this.y = 0; // number of votes, y-axis value
   this.indexLabel = "0 Votes"; // percentage of votes, y-axis label
-  // this.voteTime = startTime;
 }
 
 // create product objects
@@ -22,11 +22,20 @@ products.push(new Product("Dragon", "dragon.jpg"));
 products.push(new Product("Pen", "pen.jpg"));
 products.push(new Product("Scissors", "scissors.jpg"));
 products.push(new Product("Shark", "shark.jpg"));
-products.push(new Product("Sweep", "sweep.jpg"));
+products.push(new Product("Sweep", "sweep.jpg", "left"));
 products.push(new Product("Unicorn", "unicorn.jpg"));
 products.push(new Product("USB", "usb.jpg"));
 products.push(new Product("Water Can", "water_can.jpg"));
 products.push(new Product("Wine Glass", "wine_glass.jpg"));
+
+document.getElementById("survey").style.display = "none";
+document.getElementById("chartContainer").style.display = "none";
+
+function start() {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("survey").style.display = "inline";
+}
+
 
 function showImages() {
   var container = document.getElementById("images-container");
@@ -67,15 +76,14 @@ function recordClick(event) {
   var foundProduct = products.find(function(product){
     return (product.label == clickedProduct)
   });
-
   // put in localStorage
   localStorage.setItem(foundProduct.label, JSON.stringify(foundProduct));
-
   // add to count
   foundProduct.y++;
   foundProduct.indexLabel = foundProduct.y + " Vote";
   if (foundProduct.y > 1) { foundProduct.indexLabel += "s"; } // display '2 Votes' instead of '2 Vote'
   foundProduct.indexLabel += " (" + Math.round((foundProduct.y / totalQuestions) * 100) + "%)"; // add the % votes
+  // do the stuff
   answeredQuestions++;
   moveProgressBar();
   // change selected product to check icon
@@ -85,49 +93,44 @@ function recordClick(event) {
     var image = document.getElementById("choice" + i);
     image.removeEventListener("click", recordClick, false);
   }
-  setTimeout(showNextImages, 1000);
+  // wait a second before advancing
+  setTimeout(showNextImages, 500);
 }
 
 function showNextImages() {
-  // check if last question
+  // check if last question, add button
   if (answeredQuestions === 15) {
-
     var buttonContainer = document.getElementById("buttonContainer");
     var button = document.createElement("input");
     button.setAttribute("type", "button");
     button.setAttribute("class", "button");
-    button.setAttribute("value", "Show Results");
+    button.setAttribute("value", "View Results");
     button.setAttribute("onclick", "showChart()")
     buttonContainer.appendChild(button);
   }
-  showImages();
+  // show the next question number
   var nextQuestionNumber = answeredQuestions + 1;
   document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
+  // get the next set of pictures
+  showImages();
 }
 
-
-
 function moveProgressBar() {
+  // check if on last question in set
   if (answeredQuestions === totalQuestions) {
+    // add next group
     totalQuestions += 15;
-
   }
+  // change width of bar
   var completedBar = document.getElementById("bar");
   var width = Math.floor((answeredQuestions / totalQuestions) * 100);
   completedBar.style.width = width + '%';
+  // change text on bar
   completedBar.innerHTML = answeredQuestions + " / " + totalQuestions;
 }
 
-
-function delay(ms) {
-  ms += new Date().getTime();
-  while (new Date() < ms){}
-}
-
-// declare global chart variable
-var chart = null;
-
 function showChart () {
+  // make the chart
   chart = new CanvasJS.Chart("chartContainer", {
     theme: "theme2",
     animationEnabled: true,
@@ -159,25 +162,31 @@ function showChart () {
       }
     ]
   });
+  // show the chart
   renderChart();
+  // add event listener only after chart has been rendered
   window.addEventListener("click", renderChart);
 }
 
+// use this for event listener
 function renderChart(){
+  // sort by number of votes
+  products.sort(function(a, b){return a.y - b.y});
+  // show chart
+  document.getElementById("chartContainer").style.display = "inline";
   chart.render();
 }
-
 
 function getPastSurveys() {
   // get the keys of all the local storage and convert to objects
   var archive = [];
   var keys = Object.keys(localStorage);
   for (var i = 0; i < keys.length; i++) {
-    if (keys[i] != "lclStg") { // I don't know where this comes from but I don't want it
-    archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
+    if (keys[i] != "lclStg") { // this comes from CanvasJS
+      archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
+    }
   }
-}
-return archive;
+  return archive;
 }
 
 window.addEventListener("load", showImages);

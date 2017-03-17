@@ -9,23 +9,25 @@
   <body>
     <header>
       <img class="logo" src="img/bus-icon-72.png">
-      <h1 class="logo">BusMall</h1>
+      <h1 class="logo">BusMall</h1><h1 id="title" class="text">Customer Interest Survey</h1>
     </header>
-    <section>
-      <h1 class="text">Customer Interest Survey</h1>
+    <section id="intro">
+      <p class="text">Marzipan dragée brownie cake dessert sweet. Apple pie chocolate cake jelly-o tiramisu candy candy canes. Pudding cotton candy tiramisu muffin macaroon.<br>Topping pie sweet roll biscuit. Jelly danish gummies pie macaroon toffee powder. Pastry topping marzipan cake chocolate bar candy. Caramels chocolate cake chupa chups gingerbread.<br>Tiramisu wafer tootsie roll cheesecake bonbon oat cake wafer. Bonbon toffee lollipop tart marshmallow soufflé gingerbread jelly-o. Sweet wafer cookie. Cake dragée wafer chocolate gummi bears chocolate bar lemon drops.<br>Gummies soufflé brownie cotton candy. Chupa chups marzipan cookie oat cake gingerbread soufflé icing wafer. Lemon drops fruitcake donut sesame snaps cake. Powder candy chocolate cake caramels cheesecake chupa chups.</p>
+      <input type="button" class="button" value="Begin Survey" onclick="start()"></input>
+    </section>
+    <section id="survey">
       <h2 id="questionNumber" class="text">Question 1</h2>
-      <h3 id="instructions" class="text">Which product would most likely want to buy?</h3>
+      <h3 class="text">Which product would most likely want to buy?</h3>
       <div id="images-container"></div>
       <div id="progress" class="text">
         <div id="bar"></div>
       </div>
       <div id="buttonContainer"></div>
-      <div id="results"></div>
       <div id="chartContainer" style="height: 600px; width: 100%;"></div>
     </section>
-    <footer class="text">
+    <!-- <footer class="text">
       Copyright (c) 2017 BusMall, Inc. All Rights Reserved.
-    </footer>
+    </footer> -->
     <script type="text/javascript" src="js/canvasjs.min.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
   </body>
