@@ -28,10 +28,12 @@ products.push(new Product("USB", "usb.jpg"));
 products.push(new Product("Water Can", "water_can.jpg"));
 products.push(new Product("Wine Glass", "wine_glass.jpg"));
 
+// document.getElementByTagName("header").display = "none";
 document.getElementById("survey").style.display = "none";
 document.getElementById("chartContainer").style.display = "none";
 
 function start() {
+  // document.getElementByTagName("header").style.display = "inline";
   document.getElementById("intro").style.display = "none";
   document.getElementById("survey").style.display = "inline";
 }
@@ -87,7 +89,7 @@ function recordClick(event) {
   answeredQuestions++;
   moveProgressBar();
   // change selected product to check icon
-  clickedDiv.style.backgroundImage = "url(img/check-icon.png)";
+  clickedDiv.style.backgroundImage = "url(img/bus-icon-256.png)"; //"url(img/check-icon.png)";
   // remove event listenters to prevent voting again on same images
   for (var i = 1; i <= 3; i++) {
     var image = document.getElementById("choice" + i);
