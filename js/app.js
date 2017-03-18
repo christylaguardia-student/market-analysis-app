@@ -38,23 +38,17 @@ function start() {
 }
 
 function showImages() {
-  var container = document.getElementById("images-container");
-  // check if 1st set, if not remove previous images
-  if (answeredQuestions > 0) {
-    for (var i = 1; i <= 3; i++) {
-      var image = document.getElementById("choice" + i);
-      container.removeChild(image);
-    }
-  }
-  // keep track of pictures used
-  var usedIndexes = [];
+  removeImages();
   // get three random images
+  var usedIndexes = [];
   for (var i = 1; i <= 3; i++) {
     var randomIndex = Math.floor(Math.random() * products.length);
     // check if image already uesed
     while (usedIndexes.indexOf(randomIndex) > -1) {
       randomIndex = Math.floor(Math.random() * products.length);
     }
+    // make new image divs
+    var container = document.getElementById("images-container");
     var productToDisplay = products[randomIndex];
     var image = document.createElement("div");
     image.setAttribute("class", "images");
@@ -71,7 +65,26 @@ function showImages() {
   }
 }
 
+function removeImages() {
+  var container = document.getElementById("images-container");
+  if (answeredQuestions > 0) {
+    for (var i = 1; i <= 3; i++) {
+      var image = document.getElementById("choice" + i);
+      image.setAttribute("class", "removing");
+      container.removeChild(image);
+    }
+  }
+}
+
+function makeImagesUnclickable() {
+  for (var i = 1; i <= 3; i++) {
+    var image = document.getElementById("choice" + i);
+    image.removeEventListener("click", recordClick, false);
+  }
+}
+
 function recordClick(event) {
+  makeImagesUnclickable();
   // get image that was clicked
   var clickedDiv = event.target;
   var clickedProduct = clickedDiv.attributes.getNamedItem("data").value; // product name
@@ -92,11 +105,6 @@ function recordClick(event) {
   moveProgressBar();
   // change selected product to check icon
   clickedDiv.style.backgroundImage = "url(img/bus-icon-256.png)"; //"url(img/check-icon.png)";
-  // remove event listenters to prevent voting again on same images
-  for (var i = 1; i <= 3; i++) {
-    var image = document.getElementById("choice" + i);
-    image.removeEventListener("click", recordClick, false);
-  }
   // wait a second before advancing
   setTimeout(showNextImages, 500);
 }
@@ -105,6 +113,7 @@ function showNextImages() {
   // check if last question, add button
   var buttonContainer = document.getElementById("buttonContainer");
   if (answeredQuestions === totalQuestions) {
+    makeImagesUnclickable();
     var button = document.createElement("input");
     button.setAttribute("type", "button");
     button.setAttribute("id", "nextButton");
@@ -144,16 +153,9 @@ function doMoreSurvey() {
 
 
 function moveProgressBar() {
-  // check if on last question in set
-  // if (answeredQuestions === totalQuestions) {
-  //   // add next group
-  //   totalQuestions += 15;
-  // }
-  // change width of bar
   var completedBar = document.getElementById("bar");
   var width = Math.floor((answeredQuestions / totalQuestions) * 100);
   completedBar.style.width = width + '%';
-  // change text on bar
   completedBar.innerHTML = answeredQuestions + " / " + totalQuestions;
 }
 
@@ -214,6 +216,7 @@ function getPastSurveys() {
       archive.push(JSON.parse(localStorage.getItem(keys[i]).split(",")));
     }
   }
+  // TODO: loop through array and make into Product objects
   return archive;
 }
 
