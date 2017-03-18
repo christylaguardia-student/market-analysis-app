@@ -28,16 +28,14 @@ products.push(new Product("USB", "usb.jpg"));
 products.push(new Product("Water Can", "water_can.jpg"));
 products.push(new Product("Wine Glass", "wine_glass.jpg"));
 
-// document.getElementByTagName("header").display = "none";
+// hide these on page load
 document.getElementById("survey").style.display = "none";
 document.getElementById("chartContainer").style.display = "none";
 
 function start() {
-  // document.getElementByTagName("header").style.display = "inline";
-  document.getElementById("intro").style.display = "none";
-  document.getElementById("survey").style.display = "inline";
+  document.getElementById("intro").style.display = "none"; // hide
+  document.getElementById("survey").style.display = "inline"; // show
 }
-
 
 function showImages() {
   var container = document.getElementById("images-container");
@@ -64,6 +62,10 @@ function showImages() {
     image.setAttribute("data", productToDisplay.label); // the name of the product
     image.style.backgroundImage = "url(img/" + productToDisplay.fileName + ")";
     image.addEventListener("click", recordClick);
+    var imageText = document.createElement("h2");
+    imageText.setAttribute("class", "overlayText");
+    imageText.textContent = productToDisplay.label;
+    image.appendChild(imageText);
     container.appendChild(image);
     usedIndexes.push(randomIndex);
   }
@@ -101,28 +103,52 @@ function recordClick(event) {
 
 function showNextImages() {
   // check if last question, add button
-  if (answeredQuestions === 15) {
-    var buttonContainer = document.getElementById("buttonContainer");
+  var buttonContainer = document.getElementById("buttonContainer");
+  if (answeredQuestions === totalQuestions) {
+    var button = document.createElement("input");
+    button.setAttribute("type", "button");
+    button.setAttribute("id", "nextButton");
+    button.setAttribute("class", "button");
+    button.setAttribute("value", "Answer More Questions");
+    button.setAttribute("onclick", "doMoreSurvey()")
+    buttonContainer.appendChild(button);
+  } if (answeredQuestions === 15) {
     var button = document.createElement("input");
     button.setAttribute("type", "button");
     button.setAttribute("class", "button");
     button.setAttribute("value", "View Results");
     button.setAttribute("onclick", "showChart()")
     buttonContainer.appendChild(button);
+  } else {
+    // get the next set of pictures
+    showImages();
   }
   // show the next question number
   var nextQuestionNumber = answeredQuestions + 1;
   document.getElementById("questionNumber").textContent = "Question " + nextQuestionNumber;
-  // get the next set of pictures
+}
+
+function doMoreSurvey() {
+  // add next group
+  if (answeredQuestions === totalQuestions) {
+    totalQuestions += 15;
+  }
+  // hide the button
+  var buttonContainer = document.getElementById("buttonContainer");
+  var oldButton = document.getElementById("nextButton");
+  buttonContainer.removeChild(oldButton);
+  // do the other stuff
+  moveProgressBar();
   showImages();
 }
 
+
 function moveProgressBar() {
   // check if on last question in set
-  if (answeredQuestions === totalQuestions) {
-    // add next group
-    totalQuestions += 15;
-  }
+  // if (answeredQuestions === totalQuestions) {
+  //   // add next group
+  //   totalQuestions += 15;
+  // }
   // change width of bar
   var completedBar = document.getElementById("bar");
   var width = Math.floor((answeredQuestions / totalQuestions) * 100);
@@ -158,7 +184,7 @@ function showChart () {
         indexLabelPlacement: "inside",
         indexLabelFontColor: "black",
         indexLabelFontFamily: "Quicksand",
-        color: "#D98100",
+        color: "rgb(1, 130, 184)",
         type: "bar",
         dataPoints: products
       }
@@ -175,7 +201,7 @@ function renderChart(){
   // sort by number of votes
   products.sort(function(a, b){return a.y - b.y});
   // show chart
-  document.getElementById("chartContainer").style.display = "inline";
+  document.getElementById("chartContainer").style.display = "flex";
   chart.render();
 }
 
