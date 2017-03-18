@@ -32,12 +32,20 @@ header {
 }
 
 .logo {
+  display: block;
+  margin: 0 auto;
+}
+
+.logoText {
+  display: block;
+  margin: 0 auto;
   font-family: 'Pacifico', cursive;
+  font-size: 72px;
   color: rgb(1, 130, 184);
-  display: inline-block;
-  vertical-align: middle;
-  text-align: left;
-  font-size: 32px;
+  vertical-align: bottom;
+  text-align: center;
+  margin-top: -50px;
+
 }
 
 h1 {
@@ -119,6 +127,10 @@ img .logo {
   border-radius: 10px;
   border: none;
   display: inherit;
+}
+
+.button:hover {
+  background-color: #D98100;
 }
 
 footer {
